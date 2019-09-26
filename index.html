@@ -190,8 +190,7 @@
             >
             <div v-if="$v.form.passwordConfirm.$error">
                 <p v-if="!$v.form.passwordConfirm.required" class="error-message">The confirm password field is required</p>
-<!--                <p v-else-if="$v.form.password.minLength" class="error-message">The password must be a minimum length of x</p>-->
-<!--                <p v-else-if="$v.form.password.hasChars" class="error-message">The password must be a minimum length of x</p>-->
+                <p v-else-if="!$v.form.password.matches" class="error-message">The passwords must match</p>
             </div>
         </div>
 
@@ -293,12 +292,18 @@
                 },
 
                 passwordConfirm: {
-                    required: validators.required
+                    required: validators.required,
+                    matches: validators.sameAs('password')
+                    // matches: validators.sameAs(function(val) {
+                    //     // debugger;
+                    //     return this.form.password === this.form.passwordConfirm;
+                    //     // abcdefG8.
+                    // })
                 },
 
                 email: {
                     email: validators.email,
-                    required: validators.requiredIf(function () {
+                    required: validators.requiredIf(function() {
                         return true;
                     })
                 },
@@ -308,7 +313,7 @@
                         if (!validators.helpers.req(value)) {
                             return true;
                         }
-                        // uses the returns status code as condition for true/false (200 == true)
+                        // uses the returned promise status code as condition for true/false (200 == true)
                         return axios.get('//api.github.com/users/' + value);
                     }
                 }
