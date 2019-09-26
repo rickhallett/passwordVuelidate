@@ -28,6 +28,7 @@
             border-radius: 5px;
             background: #fff;
             padding: 0 0.8125rem;
+            margin-bottom: 5px;
             width: 100%;
             transition: border 0.5s ease;
             box-sizing: border-box;
@@ -62,6 +63,8 @@
             display: block;
             color: #f57f6c;
             font-size: 0.8rem;
+            margin-top: 1px;
+            margin-bottom: 1px;
             /*opacity: 1;*/
             /*animation-name: fadeInOpacity;*/
             /*animation-timing-function: ease-in;*/
@@ -160,14 +163,18 @@
             <input
                     id="password"
                     type="password"
+                    autocomplete="off"
                     v-model="form.password"
                     @blur="$v.form.password.$touch()"
                     :class="{error: shouldAppendErrorClass($v.form.password), valid: shouldAppendValidClass($v.form.password)}"
             >
             <div v-if="$v.form.password.$error">
                 <p v-if="!$v.form.password.required" class="error-message">The password field is required</p>
-<!--                <p v-else-if="$v.form.password.minLength" class="error-message">The password must be a minimum length of x</p>-->
-<!--                <p v-else-if="$v.form.password.hasChars" class="error-message">The password must be a minimum length of x</p>-->
+                <p v-if="!$v.form.password.eightCharsMin" class="error-message">The password must be a minimum length of 8</p>
+                <p v-if="!$v.form.password.oneLowerCaseChar" class="error-message">The password must contain one lowercase letter</p>
+                <p v-if="!$v.form.password.oneUpperCaseChar" class="error-message">The password must contain one uppercase letter</p>
+                <p v-if="!$v.form.password.oneNumeric" class="error-message">The password must contain one numeric digit</p>
+                <p v-if="!$v.form.password.oneSpecialChar" class="error-message">The password must contain one non-alphanumeric character <strong>(e.g. !"£$%^&*<>?/)</strong></p>
             </div>
         </div>
 
@@ -176,6 +183,7 @@
             <input
                     id="passwordConfirm"
                     type="password"
+                    autocomplete="off"
                     v-model="form.passwordConfirm"
                     @blur="$v.form.passwordConfirm.$touch()"
                     :class="{error: shouldAppendErrorClass($v.form.passwordConfirm), valid: shouldAppendValidClass($v.form.passwordConfirm)}"
@@ -208,12 +216,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
 <script>
     Vue.use(vuelidate.default);
-
+    //
     var oneLowerCaseChar = validators.helpers.regex('oneLower', /(?=.*[a-z])/);
     var oneUpperCaseChar = validators.helpers.regex('oneUpper', /(?=.*[A-Z])/);
     var oneNumeric = validators.helpers.regex('oneNumeric', /(?=.*[0-9])/);
-    var oneSpecialChar = validators.helpers.regex('oneSpecial', /(?=.[!@#\$%\^&])/);
-    var eigthCharsMin = validators.helpers.regex('eightCharsMin', /(?=.{8,})/);
+    var oneSpecialChar = validators.helpers.regex('oneSpecial', /(?=.[^A-Za-z0-9])/);
+    var eightCharsMin = validators.helpers.regex('eightCharsMin', /(?=.{8,})/);
 
     // above combined:
     var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
@@ -276,14 +284,16 @@
 
                 password: {
                     required: validators.required,
-                    minLength: validators.minLength
-                    // password: validators.password
+                    // minLength: validators.minLength(8),
+                    oneLowerCaseChar: oneLowerCaseChar,
+                    oneUpperCaseChar: oneUpperCaseChar,
+                    oneNumeric: oneNumeric,
+                    oneSpecialChar: oneSpecialChar,
+                    eightCharsMin: eightCharsMin
                 },
 
                 passwordConfirm: {
-                    required: validators.required,
-                    matches: validators.sameAs(this.form.password)
-                    // password: validators.password
+                    required: validators.required
                 },
 
                 email: {
