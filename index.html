@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Reset Password</title>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+
     <script src="libs/vuelidate.min.js"></script>
     <script src="libs/validators.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/animate.css@^3.5.2/animate.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quasar@^1.0.3/dist/quasar.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="style.css">
     <style>
         @import url("http://use.fontawesome.com/releases/v5.0.1/css/all.css");
@@ -133,83 +135,98 @@
     </style>
 </head>
 <body>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quasar@^1.0.3/dist/quasar.ie.polyfills.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quasar@^1.0.3/dist/quasar.umd.min.js"></script>
 <div id="app">
-    <h1>Reset Password</h1>
-    <form @submit.prevent="submitForm" autocomplete="off">
+    <q-layout>
+        <q-page-container>
+            <q-page>
+                <h1>Reset Password</h1>
+                <form @submit.prevent="submitForm" autocomplete="off">
 
-        <div class="form-group">
-            <label for="username">Username:</label>
-            <input v-model="form.username"
-                   @blur="$v.form.username.$touch()"
-                   :class="{error: shouldAppendErrorClass($v.form.username), valid: shouldAppendValidClass($v.form.username)}"
-                   id="username"
-            >
-            <p v-if="$v.form.username.$error" class="error-message">The username field is required</p>
-        </div>
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input v-model="form.username"
+                               @blur="$v.form.username.$touch()"
+                               :class="{error: shouldAppendErrorClass($v.form.username), valid: shouldAppendValidClass($v.form.username)}"
+                               id="username"
+                        >
+                        <p v-if="$v.form.username.$error" class="error-message">The username field is required</p>
+                    </div>
 
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input v-model="form.email"
-                   @blur="$v.form.email.$touch()"
-                   :class="{error: shouldAppendErrorClass($v.form.email), valid: shouldAppendValidClass($v.form.email)}"
-                   id="email"
-            >
-            <p v-if="!$v.form.email.email && $v.form.email.$error" class="error-message">Invalid email address</p>
-            <p v-if="!$v.form.email.required && $v.form.email.$error" class="error-message">Email is required so we can reset your password</p>
-        </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input v-model="form.email"
+                               @blur="$v.form.email.$touch()"
+                               :class="{error: shouldAppendErrorClass($v.form.email), valid: shouldAppendValidClass($v.form.email)}"
+                               id="email"
+                        >
+                        <p v-if="!$v.form.email.email && $v.form.email.$error" class="error-message">Invalid email address</p>
+                        <p v-if="!$v.form.email.required && $v.form.email.$error" class="error-message">Email is required so we can reset your password</p>
+                    </div>
 
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input
-                    id="password"
-                    type="password"
-                    autocomplete="off"
-                    v-model="form.password"
-                    @blur="$v.form.password.$touch()"
-                    :class="{error: shouldAppendErrorClass($v.form.password), valid: shouldAppendValidClass($v.form.password)}"
-            >
-            <div v-if="$v.form.password.$error">
-                <p v-if="!$v.form.password.required" class="error-message">The password field is required</p>
-                <p v-if="!$v.form.password.eightCharsMin" class="error-message">The password must be a minimum length of 8</p>
-                <p v-if="!$v.form.password.oneLowerCaseChar" class="error-message">The password must contain one lowercase letter</p>
-                <p v-if="!$v.form.password.oneUpperCaseChar" class="error-message">The password must contain one uppercase letter</p>
-                <p v-if="!$v.form.password.oneNumeric" class="error-message">The password must contain one numeric digit</p>
-                <p v-if="!$v.form.password.oneSpecialChar" class="error-message">The password must contain one non-alphanumeric character <strong>(e.g. !"£$%^&*<>?/)</strong></p>
-            </div>
-        </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input
+                                id="password"
+                                type="password"
+                                autocomplete="off"
+                                v-model="form.password"
+                                @blur="$v.form.password.$touch()"
+                                :class="{error: shouldAppendErrorClass($v.form.password), valid: shouldAppendValidClass($v.form.password)}"
+                        >
+                        <label>Password strength:</label>
+                        <q-linear-progress :value="progress" color="secondary" class="q-mt-sm"></q-linear-progress>
 
-        <div class="form-group">
-            <label for="passwordConfirm">Confirm Password:</label>
-            <input
-                    id="passwordConfirm"
-                    type="password"
-                    autocomplete="off"
-                    v-model="form.passwordConfirm"
-                    @blur="$v.form.passwordConfirm.$touch()"
-                    :class="{error: shouldAppendErrorClass($v.form.passwordConfirm), valid: shouldAppendValidClass($v.form.passwordConfirm)}"
-            >
-            <div v-if="$v.form.passwordConfirm.$error">
-                <p v-if="!$v.form.passwordConfirm.required" class="error-message">The confirm password field is required</p>
-                <p v-else-if="!$v.form.password.matches" class="error-message">The passwords must match</p>
-            </div>
-        </div>
+                        <div v-if="$v.form.password.$error">
+                            <p v-if="!$v.form.password.required" class="error-message">The password field is required</p>
+                            <p v-if="!$v.form.password.eightCharsMin" class="error-message">The password must be a minimum length of 8</p>
+                            <p v-if="!$v.form.password.oneLowerCaseChar" class="error-message">The password must contain one lowercase letter</p>
+                            <p v-if="!$v.form.password.oneUpperCaseChar" class="error-message">The password must contain one uppercase letter</p>
+                            <p v-if="!$v.form.password.oneNumeric" class="error-message">The password must contain one numeric digit</p>
+                            <p v-if="!$v.form.password.oneSpecialChar" class="error-message">The password must contain one non-alphanumeric character <strong>(e.g. !"£$%^&*<>?/)</strong></p>
+                        </div>
+                    </div>
 
-        <div class="form-group github-username">
-            <h6>Async API validation POC:</h6>
-            <label for="github-username">GitHub username:</label>
-            <input v-model.lazy="$v.form.githubUsername.$model"
-                   :class="{error: shouldAppendErrorClass($v.form.githubUsername), valid: shouldAppendValidClass($v.form.githubUsername)}"
-                   id="github-username"
-            >
-            <span v-show="$v.form.githubUsername.$pending" class="fa fa-spinner fa-spin"></span>
-            <p v-if="!$v.form.githubUsername.exists && $v.form.githubUsername.$error" class="error-message">There is not GitHub user with this username</p>
-        </div>
+                    <div class="form-group">
+                        <label for="passwordConfirm">Confirm Password:</label>
+                        <input
+                                id="passwordConfirm"
+                                type="password"
+                                autocomplete="off"
+                                v-model="form.passwordConfirm"
+                                @blur="$v.form.passwordConfirm.$touch()"
+                                :class="{error: shouldAppendErrorClass($v.form.passwordConfirm), valid: shouldAppendValidClass($v.form.passwordConfirm)}"
+                        >
+                        <div v-if="$v.form.passwordConfirm.$error">
+                            <p v-if="!$v.form.passwordConfirm.required" class="error-message">The confirm password field is required</p>
+                            <p v-else-if="!$v.form.password.matches" class="error-message">The passwords must match</p>
+                        </div>
+                    </div>
 
-        <div class="btn-container">
-            <button>Submit</button>
-        </div>
+                    <hr>
 
-    </form>
+                    <div class="form-group github-username bg-green-1 q-pa-md">
+                        <h6 class="q-ma-none">Async API validation POC:</h6>
+                        <p>Let's use this to check the username/email in realtime..!</p>
+                        <label for="github-username">GitHub username:</label>
+                        <input v-model.lazy="$v.form.githubUsername.$model"
+                               :class="{error: shouldAppendErrorClass($v.form.githubUsername), valid: shouldAppendValidClass($v.form.githubUsername)}"
+                               id="github-username"
+                        >
+                        <span v-show="$v.form.githubUsername.$pending" class="fa fa-spinner fa-spin"></span>
+                        <p v-if="!$v.form.githubUsername.exists && $v.form.githubUsername.$error" class="error-message">There is not GitHub user with this username</p>
+                    </div>
+
+                    <div class="btn-container">
+                        <button>Submit</button>
+                    </div>
+
+                </form>
+            </q-page>
+        </q-page-container>
+    </q-layout>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
@@ -223,7 +240,7 @@
     var eightCharsMin = validators.helpers.regex('eightCharsMin', /(?=.{8,})/);
 
     // above combined:
-    var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+    var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{12,})");
 
     /**
      * medium strength == true if it contains:
@@ -235,7 +252,7 @@
      * No special characters required
      * @type {RegExp}
      */
-    var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+    var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{10,})");
 
     /**
      * @function analysePassword checks val against two regex to determine strength
@@ -243,26 +260,15 @@
      * @returns {number}
      */
     function analysePassword(val) {
-        var passwordStrengths = {
-            strong: 3,
-            medium: 2,
-            poor: 1
-        };
-
-        if (strongRegex.test(val)) {
-            return passwordStrengths.strong;
-        }
-
-        if(mediumRegex.test(val)) {
-            return passwordStrengths.medium
-        }
-
+        console.log(val);
+        var passwordStrengths = { strong: 0.5, medium: 0.2, poor: 0 };
+        if (strongRegex.test(val)) return passwordStrengths.strong;
+        if (mediumRegex.test(val)) return passwordStrengths.medium;
         return passwordStrengths.poor
     }
 
     var ResetPasswordForm = new Vue({
         el: '#app',
-
         data: function() {
             return {
                 form: {
@@ -274,7 +280,18 @@
                 }
             }
         },
+        computed: {
+            progress: function() {
+                if (this.$v.form.password.$invalid) {
+                    return 0;
+                }
 
+                if (!this.$v.form.password.$invalid) {
+                    console.log(analysePassword(this.form.password));
+                    return 0.5 + analysePassword(this.form.password);
+                }
+            }
+        },
         validations: {
             form: {
                 username: {
@@ -283,7 +300,6 @@
 
                 password: {
                     required: validators.required,
-                    // minLength: validators.minLength(8),
                     oneLowerCaseChar: oneLowerCaseChar,
                     oneUpperCaseChar: oneUpperCaseChar,
                     oneNumeric: oneNumeric,
@@ -294,11 +310,6 @@
                 passwordConfirm: {
                     required: validators.required,
                     matches: validators.sameAs('password')
-                    // matches: validators.sameAs(function(val) {
-                    //     // debugger;
-                    //     return this.form.password === this.form.passwordConfirm;
-                    //     // abcdefG8.
-                    // })
                 },
 
                 email: {
@@ -319,7 +330,6 @@
                 }
             }
         },
-
         methods: {
             shouldAppendValidClass: function(field) { // ex: field = $v.form.email
                 return !field.$invalid && field.$model && field.$dirty;
@@ -337,7 +347,8 @@
                     console.log('Invalid form');
                 }
             }
-        }
+        },
+        created: function() {}
     });
 </script>
 </body>
