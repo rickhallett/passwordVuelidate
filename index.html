@@ -7,6 +7,128 @@
     <script src="libs/vuelidate.min.js"></script>
     <script src="libs/validators.min.js"></script>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Styles are taken from https://github.com/monterail/vuelidate */
+        @import url("http://use.fontawesome.com/releases/v5.0.1/css/all.css");
+
+        body {
+            width: 40%;
+            margin: 0 auto;
+            font-family: "Lato", sans-serif;
+        }
+
+        input {
+            font-family: "Lato", sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374853;
+            line-height: 2.375rem;
+            min-height: 2.375rem;
+            position: relative;
+            border: 1px solid #E8E8E8;
+            border-radius: 5px;
+            background: #fff;
+            padding: 0 0.8125rem;
+            width: 100%;
+            transition: border 0.5s ease;
+            box-sizing: border-box;
+        }
+
+        input.error, input.error:focus {
+            border-color: #f79483;
+        }
+
+        input.valid, input.valid:focus {
+            border-color: #41B883;
+        }
+
+        input:focus {
+            border-color: #a8a8a8;
+            outline: none;
+        }
+
+        label {
+            font-size: 0.8125rem;
+            color: #4b6372;
+            margin-bottom: 0.3125rem;
+            /*margin-left: 0.875rem;*/
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .error-message {
+            display: block;
+            color: #f57f6c;
+            font-size: 0.8rem;
+            /*opacity: 1;*/
+            /*animation-name: fadeInOpacity;*/
+            /*animation-timing-function: ease-in;*/
+            /*transition-duration: 500ms;*/
+        }
+
+        /*@keyframes fadeInOpacity {*/
+        /*    0% { opacity: 0; }*/
+        /*    100% { opacity: 1; }*/
+        /*}*/
+
+        h1 {
+            color: #374853;
+            font-size: 1.5rem;
+        }
+
+        button {
+            font-family: "Lato", sans-serif;
+            font-size: 0.875rem;
+            font-weight: 300;
+            color: #fff;
+            min-height: 2.5rem;
+            line-height: 1.4;
+            padding: 0.5rem 1.875rem 0.625rem;
+            box-sizing: border-box;
+            position: relative;
+            display: inline-block;
+            background: #41B883;
+            border: none;
+            border-radius: 5px;
+            z-index: 1;
+            overflow: hidden;
+            outline: none;
+            vertical-align: middle;
+            transition: 0.1s background ease, 0.1s border-color ease, 0.1s color ease;
+            border-bottom: 3px solid #266d4d;
+            text-decoration: none;
+            margin: 0 auto;
+        }
+
+        button:hover, button:focus {
+            background: #349268;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: #ccc6c6;
+            border-bottom: 3px solid #b3b1b1;
+            cursor: not-allowed;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .github-username {
+            position: relative;
+        }
+
+        .github-username .fa-spinner {
+            position: absolute;
+            top: 33px;
+            right: 10px;
+        }
+    </style>
 </head>
 <body>
 <div id="app">
@@ -14,13 +136,13 @@
     <form @submit.prevent="submitForm" autocomplete="off">
 
         <div class="form-group">
-            <label for="name">Name:</label>
-            <input v-model="form.name"
-                   @blur="$v.form.name.$touch()"
-                   :class="{error: shouldAppendErrorClass($v.form.name), valid: shouldAppendValidClass($v.form.name)}"
-                   id="name"
+            <label for="username">Username:</label>
+            <input v-model="form.username"
+                   @blur="$v.form.username.$touch()"
+                   :class="{error: shouldAppendErrorClass($v.form.username), valid: shouldAppendValidClass($v.form.username)}"
+                   id="username"
             >
-            <p v-if="$v.form.name.$error" class="error-message">The name field is required</p>
+            <p v-if="$v.form.username.$error" class="error-message">The username field is required</p>
         </div>
 
         <div class="form-group">
@@ -35,20 +157,6 @@
         </div>
 
         <div class="form-group">
-            <label for="age">Age:</label>
-            <input v-model.number="form.age"
-                   @blur="$v.form.age.$touch()"
-                   :class="{error: shouldAppendErrorClass($v.form.age), valid: shouldAppendValidClass($v.form.age)}"
-                   id="age"
-            >
-            <div v-if="$v.form.age.$error">
-                <p v-if="!$v.form.age.required" class="error-message">The age field is required</p>
-                <p v-else-if="!$v.form.age.integer" class="error-message">The age field should be an integer</p>
-                <p v-else-if="!$v.form.age.oldEnoughAndAlive" class="error-message">You should be at least 12 and younger than 120 to continue</p>
-            </div>
-        </div>
-
-        <div class="form-group">
             <label for="password">Password:</label>
             <input
                     id="password"
@@ -65,22 +173,20 @@
         </div>
 
         <div class="form-group">
-            <label for="password">Password:</label>
+            <label for="passwordConfirm">Confirm Password:</label>
             <input
-                    id="password"
+                    id="passwordConfirm"
                     type="password"
-                    v-model="form.password"
-                    @blur="$v.form.password.$touch()"
-                    :class="{error: shouldAppendErrorClass($v.form.password), valid: shouldAppendValidClass($v.form.password)}"
+                    v-model="form.passwordConfirm"
+                    @blur="$v.form.passwordConfirm.$touch()"
+                    :class="{error: shouldAppendErrorClass($v.form.passwordConfirm), valid: shouldAppendValidClass($v.form.passwordConfirm)}"
             >
-            <div v-if="$v.form.password.$error">
-                <p v-if="!$v.form.password.required" class="error-message">The password field is required</p>
+            <div v-if="$v.form.passwordConfirm.$error">
+                <p v-if="!$v.form.passwordConfirm.required" class="error-message">The confirm password field is required</p>
 <!--                <p v-else-if="$v.form.password.minLength" class="error-message">The password must be a minimum length of x</p>-->
 <!--                <p v-else-if="$v.form.password.hasChars" class="error-message">The password must be a minimum length of x</p>-->
             </div>
         </div>
-
-
 
         <div class="form-group github-username">
             <h6>Async API validation POC:</h6>
@@ -93,7 +199,7 @@
             <p v-if="!$v.form.githubUsername.exists && $v.form.githubUsername.$error" class="error-message">There is not GitHub user with this username</p>
         </div>
 
-        <div>
+        <div class="btn-container">
             <button>Submit</button>
         </div>
 
@@ -104,20 +210,16 @@
 <script>
     Vue.use(vuelidate.default);
 
-    const oldEnoughAndAlive = validators.between(12, 120);
-
-    new Vue({
+    var ResetPasswordForm = new Vue({
         el: '#app',
 
-        data () {
+        data: function() {
             return {
                 form: {
-                    name: null,
-                    age: null,
+                    username: null,
                     email: null,
                     password: null,
                     passwordConfirm: null,
-                    newsletter: null,
                     githubUsername: null
                 }
             }
@@ -125,24 +227,18 @@
 
         validations: {
             form: {
-                name: {
+                username: {
                     required: validators.required
-                },
-
-                age: {
-                    required: validators.required, // $v.form.age.required
-                    integer: validators.integer, // $v.form.age.integer
-                    oldEnoughAndAlive // $v.form.age.oldEnoughAndAlive
                 },
 
                 password: {
                     required: validators.required,
-                    password: validators.password
+                    // password: validators.password
                 },
 
                 passwordConfirm: {
                     required: validators.required,
-                    password: validators.password
+                    // password: validators.password
                 },
 
                 email: {
@@ -153,71 +249,36 @@
                 },
 
                 githubUsername: {
-                    exists (value) {
+                    exists: function(value) {
                         if (!validators.helpers.req(value)) {
-                            return true
+                            return true;
                         }
-                        return axios.get(`//api.github.com/users/${value}`)
+                        // uses the returns status code as condition for true/false (200 == true)
+                        return axios.get(`//api.github.com/users/${value}`);
                     }
                 }
             }
         },
 
         methods: {
-            shouldAppendValidClass (field) { // ex: field = $v.form.email
+            shouldAppendValidClass: function(field) { // ex: field = $v.form.email
                 return !field.$invalid && field.$model && field.$dirty;
             },
 
-            shouldAppendErrorClass (field) { // ex: field = $v.form.email
+            shouldAppendErrorClass: function(field) { // ex: field = $v.form.email
                 return field.$error;
             },
 
-            submitForm () {
+            submitForm: function() {
                 this.$v.form.$touch();
                 if (!this.$v.form.$invalid) {
-                    console.log('📝 Form Submitted', this.form);
+                    console.log('📝Form Submitted', this.form);
                 } else {
-                    console.log('❌ Invalid form');
+                    console.log('❌Invalid form');
                 }
             }
         }
     });
-
-    /**
-     * {
-        login: "rickhallett",
-        id: 29977869,
-        node_id: "MDQ6VXNlcjI5OTc3ODY5",
-        avatar_url: "https://avatars3.githubusercontent.com/u/29977869?v=4",
-        gravatar_id: "",
-        url: "https://api.github.com/users/rickhallett",
-        html_url: "https://github.com/rickhallett",
-        followers_url: "https://api.github.com/users/rickhallett/followers",
-        following_url: "https://api.github.com/users/rickhallett/following{/other_user}",
-        gists_url: "https://api.github.com/users/rickhallett/gists{/gist_id}",
-        starred_url: "https://api.github.com/users/rickhallett/starred{/owner}{/repo}",
-        subscriptions_url: "https://api.github.com/users/rickhallett/subscriptions",
-        organizations_url: "https://api.github.com/users/rickhallett/orgs",
-        repos_url: "https://api.github.com/users/rickhallett/repos",
-        events_url: "https://api.github.com/users/rickhallett/events{/privacy}",
-        received_events_url: "https://api.github.com/users/rickhallett/received_events",
-        type: "User",
-        site_admin: false,
-        name: "Rick Hallett",
-        company: "Studied with @gordonmzhu",
-        blog: "",
-        location: "School Business Services",
-        email: null,
-        hireable: null,
-        bio: "Junior software developer",
-        public_repos: 106,
-        public_gists: 9,
-        followers: 29,
-        following: 93,
-        created_at: "2017-07-07T11:29:36Z",
-        updated_at: "2019-09-23T23:37:21Z"
-        }
-     */
 </script>
 </body>
 </html>
