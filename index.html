@@ -276,7 +276,7 @@
 
                 password: {
                     required: validators.required,
-                    minLength: validators.minLength,
+                    minLength: validators.minLength
                     // password: validators.password
                 },
 
@@ -317,9 +317,9 @@
             submitForm: function() {
                 this.$v.form.$touch();
                 if (!this.$v.form.$invalid) {
-                    console.log('📝Form Submitted', this.form);
+                    console.log('Form submitted', this.form);
                 } else {
-                    console.log('❌Invalid form');
+                    console.log('Invalid form');
                 }
             }
         }
