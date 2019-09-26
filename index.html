@@ -24,6 +24,17 @@
         </div>
 
         <div class="form-group">
+            <label for="email">Email:</label>
+            <input v-model="form.email"
+                   @blur="$v.form.email.$touch()"
+                   :class="{error: shouldAppendErrorClass($v.form.email), valid: shouldAppendValidClass($v.form.email)}"
+                   id="email"
+            >
+            <p v-if="!$v.form.email.email && $v.form.email.$error" class="error-message">Invalid email address</p>
+            <p v-if="!$v.form.email.required && $v.form.email.$error" class="error-message">Email is required so we can reset your password</p>
+        </div>
+
+        <div class="form-group">
             <label for="age">Age:</label>
             <input v-model.number="form.age"
                    @blur="$v.form.age.$touch()"
@@ -38,25 +49,41 @@
         </div>
 
         <div class="form-group">
-            <label for="newsletter">Subscribe to the newsletter:</label>
-            <input v-model="form.newsletter"
-                   type="checkbox"
-                   id="newsletter"
+            <label for="password">Password:</label>
+            <input
+                    id="password"
+                    type="password"
+                    v-model="form.password"
+                    @blur="$v.form.password.$touch()"
+                    :class="{error: shouldAppendErrorClass($v.form.password), valid: shouldAppendValidClass($v.form.password)}"
             >
+            <div v-if="$v.form.password.$error">
+                <p v-if="!$v.form.password.required" class="error-message">The password field is required</p>
+<!--                <p v-else-if="$v.form.password.minLength" class="error-message">The password must be a minimum length of x</p>-->
+<!--                <p v-else-if="$v.form.password.hasChars" class="error-message">The password must be a minimum length of x</p>-->
+            </div>
         </div>
 
         <div class="form-group">
-            <label for="email">Email:</label>
-            <input v-model="form.email"
-                   @blur="$v.form.email.$touch()"
-                   :class="{error: shouldAppendErrorClass($v.form.email), valid: shouldAppendValidClass($v.form.email)}"
-                   id="email"
+            <label for="password">Password:</label>
+            <input
+                    id="password"
+                    type="password"
+                    v-model="form.password"
+                    @blur="$v.form.password.$touch()"
+                    :class="{error: shouldAppendErrorClass($v.form.password), valid: shouldAppendValidClass($v.form.password)}"
             >
-            <p v-if="!$v.form.email.email && $v.form.email.$error" class="error-message">Invalid email address</p>
-            <p v-if="!$v.form.email.required && $v.form.email.$error" class="error-message">Email is required so we can reset your password</p>
+            <div v-if="$v.form.password.$error">
+                <p v-if="!$v.form.password.required" class="error-message">The password field is required</p>
+<!--                <p v-else-if="$v.form.password.minLength" class="error-message">The password must be a minimum length of x</p>-->
+<!--                <p v-else-if="$v.form.password.hasChars" class="error-message">The password must be a minimum length of x</p>-->
+            </div>
         </div>
 
+
+
         <div class="form-group github-username">
+            <h6>Async API validation POC:</h6>
             <label for="github-username">GitHub username:</label>
             <input v-model.lazy="$v.form.githubUsername.$model"
                    :class="{error: shouldAppendErrorClass($v.form.githubUsername), valid: shouldAppendValidClass($v.form.githubUsername)}"
@@ -88,6 +115,8 @@
                     name: null,
                     age: null,
                     email: null,
+                    password: null,
+                    passwordConfirm: null,
                     newsletter: null,
                     githubUsername: null
                 }
@@ -107,7 +136,13 @@
                 },
 
                 password: {
+                    required: validators.required,
+                    password: validators.password
+                },
 
+                passwordConfirm: {
+                    required: validators.required,
+                    password: validators.password
                 },
 
                 email: {
